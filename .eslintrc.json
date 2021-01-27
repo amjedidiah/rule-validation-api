@@ -14,7 +14,17 @@
     "parserOptions": {
         "ecmaVersion": 2018
     },
+    "plugins": [
+      "import"
+    ],
     "rules": {
+      "import/no-unresolved": [
+        2,
+        {
+          "commonjs": true,
+          "amd": true
+        }
+      ]
     },
     "settings": {
       "import/resolver": {
