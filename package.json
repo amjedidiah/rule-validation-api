@@ -9,14 +9,10 @@
     "api:serve": "api-console serve api/build",
     "api:start": "yarn api:build && yarn api:serve",
     "lint": "eslint \"src/**/*.js\" || false",
-    "test": "jest",
-    "test:cover": "jest --coverage",
-    "test:watch": "jest --watch",
-    "check": "yarn lint && yarn test",
-    "dev": "yarn check && nodemon app.js",
+    "dev": "yarn lint && nodemon app.js",
     "start": "node app.js"
   },
-  "pre-commit": "check",
+  "pre-commit": "lint",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/amjedidiah/rule-validation-api.git"
