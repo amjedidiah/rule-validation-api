@@ -1,0 +1,256 @@
+#%RAML 1.0
+title: rule-validation-api
+version: 1.0.0
+baseUri: http://localhost:8008
+mediaType: application/json
+types:
+    Condition:
+        description: The condition to use for validating the rule
+        type: string
+        enum: [eq, neq, gt, gte, contains]
+        example: gte
+    ConditionValueNumber:
+        description: The condition value of type number
+        type: number
+        example: 30
+    ConditionValueString:
+        description: The condition value of type string
+        type: string
+        example: a
+    ConditionValue:
+        description: The condition value to run the rule against
+        type: ConditionValueNumber | ConditionValueString
+    Data:
+        description: Data field
+        type: DataObject | DataArray | DataString
+    DataArray:
+        description: Data field type array
+        type: array
+        example: [The Nauvoo, The Razorback, The Roci, Tycho]
+    DataObject:
+        description: Data field type object
+        type: object
+        properties:
+            name?:
+                type: string
+                example: James Holden
+            crew?:
+                type: string
+                example: Rocinante
+            age?:
+                type: number
+                example: 34
+            position?:
+                type: string
+                example: Captain
+            mission?: MissionNumber | MissionObject
+    DataString:
+        description: Data field type string
+        type: string
+        example: damien-marley
+    Error:
+        description: Error response
+        type: Response
+        properties:
+              status:
+                  example: error
+              data:
+                  type: nil
+                  example: null
+    Field:
+        description: The field in the data passed to validate the rule against
+        type: string
+        example: missions
+    InvalidPayload:
+        description: Invalid JSON payload is passed to API
+        type: Error
+        properties:
+              message:
+                  example: Invalid JSON payload passed.
+    MissionNumber:
+        type: number
+        example: 45
+    MissionObject:
+        type: object
+        properties:
+            count:
+                type: number
+                example: 45
+            successful:
+                type: number
+                example: 44
+            failed:
+                type: number
+                example: 1
+    MissenField:
+        description: Field specified in the rule object is missing from the data passed
+        type: Error
+        properties:
+              message:
+                  example: field age is missing from data.
+    MyInfo:
+        description: My info
+        type: object
+        properties:
+            name:
+                description: My full name
+                type: string
+                minLength: 2
+                example: Jedidiah Amaraegbu
+            github:
+                description: Github handle with @ symbol
+                type: string
+                pattern: ^@[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$
+                example: '@amjedidiah'
+            email:
+                description: Preferred email contact
+                type: string
+                pattern: ^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$
+                example: imunacode@gmail.com
+            mobile:
+                description: Preferred mobile number contact
+                type: string
+                pattern: ^0\d{10}$
+                example: "08165972229"
+            twitter:
+                description: Twitter handle with @ symbol
+                type: string
+                pattern: ^@[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$
+                example: '@am_jedidiah'
+                required: false
+    Response:
+        description: Popular JSEND response pattern
+        type: object
+        properties:
+            message:
+                description: Apt response message for API
+                type: string
+                example: API response message.
+            status:
+                description: Status for API response
+                type: string
+                enum: [error,success]
+                example: success
+            data:
+                description: This is the meat of the API response
+                type: nil | object | array | MyInfo
+    Rule:
+        description: Rule field
+        type: object
+        properties:
+            field: Field
+            condition: Condition
+            condition_value: ConditionValue
+    RequiredField:
+        description: Required field isn't passed
+        type: Error
+        properties:
+              message:
+                  example: rule is required.
+    Validation:
+        description: Validation response
+        type: object
+        properties:
+            error:
+                type: boolean
+                example: false
+            field: Field
+            field_value: ConditionValue
+            condition: Condition
+            condition_value: ConditionValue
+    ValidationFailed:
+        description: Rule validation failed
+        type: Response
+        properties:
+            message:
+                example: field missions failed validation.
+            status:
+                example: error
+            data:
+                type: object
+                properties:
+                    validation?:
+                        type: Validation
+                        properties:
+                            error:
+                                type: boolean
+                                example: true
+                            condition_value:
+                                type: ConditionValue
+                                example: 50
+    WrongType:
+        description: Field is of the wrong type
+        type: Error
+        properties:
+              message:
+                  example: rule should be an object.
+/:
+    description: Base route
+    get:
+        description:
+        responses:
+            200:
+                description: Base route fetched successfully
+                body:
+                    application/json:
+                        type: Response
+                        properties:
+                            message:
+                                example: My Rule-Validation API.
+                            status:
+                                example: success
+                            data: MyInfo
+/validate-rule:
+    description: Rule validation route
+    post:
+        description: Accept JSON data containing a rule and data field to validate the rule against
+        body:
+            application/json:
+                type: object
+                properties:
+                    rule: Rule
+                    data: Data
+                example: {
+                  rule: {
+                    "field": "missions",
+                    "condition": "gte",
+                    "condition_value": 30
+                  },
+                  data: {
+                    "name": "James Holden",
+                    "crew": "Rocinante",
+                    "age": 34,
+                    "position": "Captain",
+                    "missions": 45
+                  }
+                }
+        responses:
+            200:
+                description: Rule is successfully validated
+                body:
+                    application/json:
+                        type: Response
+                        properties:
+                            message:
+                                example: field missions successfully validated.
+                            status:
+                                example: success
+                            data:
+                                type: object
+                                properties:
+                                    validation?:
+                                        type: Validation
+                                        properties:
+                                            field_value:
+                                                type: ConditionValue
+                                                example: 30
+                                            condition_value:
+                                                type: ConditionValue
+                                                example: 30
+            400:
+                description: Error status code
+                body:
+                    application/json: RequiredField | WrongType | InvalidPayload | MissenField | ValidationFailed
+
+
+

@@ -6,7 +6,7 @@
   "scripts": {
     "api:build": "api-console build -t \"RAML 1.0\" api.raml",
     "preapi:serve": "start chrome http://127.0.0.1:8000",
-    "api:serve": "api-console serve api/build",
+    "api:serve": "api-console serve build",
     "api:start": "yarn api:build && yarn api:serve",
     "prettier": "prettier --write \"src/**/*.js\" || false",
     "lint": "eslint \"src/**/*.js\" || false",
