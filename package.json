@@ -8,8 +8,8 @@
     "preapi:serve": "start chrome http://127.0.0.1:8000",
     "api:serve": "api-console serve build",
     "api:start": "yarn api:build && yarn api:serve",
-    "prettier": "prettier --write \"src/**/*.js\" || false",
-    "lint": "eslint \"src/**/*.js\" || false",
+    "prettier": "prettier --write \"**/*.js\" || false",
+    "lint": "eslint \"**/*.js\" --fix || false",
     "check": "yarn prettier && yarn lint",
     "dev": "yarn check && nodemon app.js",
     "start": "node src/app.js"
@@ -46,6 +46,12 @@
     "prettier": "2.2.1"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "express-form-data": "^2.0.14",
+    "morgan": "^1.10.0"
   }
 }
