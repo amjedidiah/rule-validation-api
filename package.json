@@ -12,7 +12,8 @@
     "lint": "eslint \"**/*.js\" --fix || false",
     "check": "yarn prettier && yarn lint",
     "dev": "yarn check && nodemon app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "deploy": "git push heroku main"
   },
   "pre-commit": "check",
   "repository": {
@@ -53,5 +54,8 @@
     "express": "^4.17.1",
     "express-form-data": "^2.0.14",
     "morgan": "^1.10.0"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
