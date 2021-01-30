@@ -1,7 +1,7 @@
 # Validate Rule API
 
-Validates data according to a specified condition
-Consitions include
+Validates data according to a specified condition.
+Conditions include
 
 - `eq`: Equal to
 - `neq`: Not equal to
@@ -23,7 +23,7 @@ Consitions include
 
 ### Project Overview
 
-Refer to this [HTML file](./docs/FullTime.html)
+Refer to this **_[HTML file](./docs/FullTime.html)_**
 
 ### Why this project?
 
