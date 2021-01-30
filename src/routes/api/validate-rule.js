@@ -6,7 +6,7 @@ module.exports = (req, res) => {
     res.status(code).send({
       message,
       status: 'error',
-      data: null
+      data: null,
     });
 
   const requiredError = (field, parent) =>
@@ -14,10 +14,10 @@ module.exports = (req, res) => {
 
   const typeError = (field, types, customMessage) =>
     returnError(
-      400,
-      customMessage
-        ? customMessage
-        : `${field} should be a ${types.join(' or ')}.`
+        400,
+      customMessage ?
+        customMessage :
+        `${field} should be a ${types.join(' or ')}.`,
     );
 
   const validate = (fieldValue, condition, conditionValue) =>
@@ -27,12 +27,12 @@ module.exports = (req, res) => {
       gt: fieldValue > conditionValue,
       gte: fieldValue >= conditionValue,
       contains:
-        Array.isArray(fieldValue) || typeof fieldValue === 'string'
-          ? fieldValue.includes(conditionValue)
-          : false
+        Array.isArray(fieldValue) || typeof fieldValue === 'string' ?
+          fieldValue.includes(conditionValue) :
+          false,
     }[condition] || false);
 
-  const { body } = req;
+  const {body} = req;
 
   console.log(typeof body['data'], req.is('application/json'));
 
@@ -46,7 +46,7 @@ module.exports = (req, res) => {
   if (body['data'] === undefined) return requiredError('data');
 
   // Check that rule is json object
-  const { rule, data } = body;
+  const {rule, data} = body;
   if (typeof rule !== 'object') return typeError('rule', ['json object']);
 
   // Check for required fields and valid field types in rule JSON object
@@ -57,9 +57,9 @@ module.exports = (req, res) => {
   }
   if (!conditions.includes(ruleObject['condition'])) {
     return typeError(
-      'condition',
-      'rule',
-      `Condition in rule should be either ${conditions.join(' or ')} .`
+        'condition',
+        'rule',
+        `Condition in rule should be either ${conditions.join(' or ')} .`,
     );
   }
   if (ruleObject['condition_value'] === undefined) {
@@ -92,7 +92,7 @@ module.exports = (req, res) => {
           3:
             data[fieldArray[0]] &&
             data[fieldArray[0]][fieldArray[1]] &&
-            data[fieldArray[0]][fieldArray[1]][fieldArray[2]]
+            data[fieldArray[0]][fieldArray[1]][fieldArray[2]],
         }[fieldArray.length] ||
         (data[fieldArray[0]] &&
           data[fieldArray[0]][fieldArray[1]] &&
@@ -104,40 +104,40 @@ module.exports = (req, res) => {
 
   if (!valueToValidate()) {
     return returnError(
-      400,
-      `field ${ruleObject['field']} is missing from data`
+        400,
+        `field ${ruleObject['field']} is missing from data`,
     );
   }
 
   return validate(
-    valueToValidate(),
-    ruleObject['condition'],
-    ruleObject['condition_value']
-  ) === true
-    ? res.status(200).send({
-        message: `field ${ruleObject['field']} successfully validated.`,
-        status: 'success',
-        data: {
-          validation: {
-            error: false,
-            field: ruleObject['field'],
-            field_value: valueToValidate(),
-            condition: ruleObject['condition'],
-            condition_value: ruleObject['condition_value']
-          }
-        }
-      })
-    : res.status(400).send({
-        message: `field ${ruleObject['field']} failed validation.`,
-        status: 'error',
-        data: {
-          validation: {
-            error: true,
-            field: ruleObject['field'],
-            field_value: valueToValidate(),
-            condition: ruleObject['condition'],
-            condition_value: ruleObject['condition_value']
-          }
-        }
-      });
+      valueToValidate(),
+      ruleObject['condition'],
+      ruleObject['condition_value'],
+  ) === true ?
+    res.status(200).send({
+      message: `field ${ruleObject['field']} successfully validated.`,
+      status: 'success',
+      data: {
+        validation: {
+          error: false,
+          field: ruleObject['field'],
+          field_value: valueToValidate(),
+          condition: ruleObject['condition'],
+          condition_value: ruleObject['condition_value'],
+        },
+      },
+    }) :
+    res.status(400).send({
+      message: `field ${ruleObject['field']} failed validation.`,
+      status: 'error',
+      data: {
+        validation: {
+          error: true,
+          field: ruleObject['field'],
+          field_value: valueToValidate(),
+          condition: ruleObject['condition'],
+          condition_value: ruleObject['condition_value'],
+        },
+      },
+    });
 };
