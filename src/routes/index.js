@@ -1,9 +1,10 @@
-// Module imports
+// Module import
 const express = require('express');
 
 // Router
 const router = new express.Router();
 
+// Set valid endpoits and request types
 router.get('/', require('./api'));
 router.post('/validate-rule', require('./api/validate-rule'));
 
@@ -16,5 +17,5 @@ router.all('*', (req, res) =>
   }),
 );
 
-// Export router module
+// Export router
 module.exports = router;

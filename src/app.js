@@ -1,10 +1,10 @@
 // Module imports
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const errorHandler = require('errorhandler');
 
-// Route imports
+// Route import
 const routes = require('./routes');
 
 // Environment variables
@@ -17,7 +17,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 const app = express();
 const port = process.env.PORT || 8008;
 
-// Configure our app
+// CORS & Morgan
 app.use(cors());
 app.use(require('morgan')('dev'));
 
@@ -30,7 +30,7 @@ if (!isProduction) {
   app.use(errorHandler());
 }
 
-// Routes
+// Use Routes
 app.use(routes);
 
 // Listen on Port 8008
